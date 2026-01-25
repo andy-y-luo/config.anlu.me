@@ -1,0 +1,77 @@
+#+title: Emacs Configuration
+#+setupfile: ../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/init.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Emacs Configuration
+
+** Introduction
+My journey of using Emacs begins here, with configuring a vanilla installation. These configurations will follow the literate programming paradigm (you're welcome future me), and uses `org` tangling to spit out the actual configuration files.
+
+The organization and structure of these configs are highly inspired by [[https://config.phundrak.com/emacs/][Phundrak's Dotfiles]], with many snippets and ideas shamelessy copied.
+
+** Warning on noweb syntax
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+This configuration makes heavy use of the [[https://orgmode.org/manual/Noweb-Reference-Syntax.html][noweb]] syntax. This means if you encounter some code that looks ~<<like-this>>~, org-mode will replace this snippet with another code snippet declared elsewhere in my configuration. If you see some code that looks ~<<like-this()>>~, some generating code will run and replace this piece of text with the text generated. A quick example:
+#+begin_src elisp
+(defun hello ()
+  <<generate-docstring()>>
+  <<print-hello>>)
+#+end_src
+
+Will instead appear as
+#+begin_src emacs-lisp :noweb yes
+(defun hello ()
+  <<generate-docstring()>>
+  <<print-hello>>)
+#+end_src
+
+This is because I have the block of code below named ~generate-docstring~ which generates an output, which replaces its noweb tag. You can recognize noweb snippets generating code with the parenthesis. Often, such blocks aren’t visible in my HTML exports, but you can still see them if you open the actual org source file.
+#+name: generate-docstring
+#+begin_src emacs-lisp
+(concat "\""
+        "Print \\\"Hello World!\\\" in the minibuffer."
+        "\"")
+#+end_src
+
+On the other hand, noweb snippets without parenthesis simply replace the snippet with the equivalent named code block. For instance the one below is named ~print-hello~ and is placed as-is in the target source block.
+#+name: print-hello
+#+begin_src emacs-lisp
+(message "Hello World!")
+#+end_src
+
+** Loading all configuration modules
+
+The configuration is split between files for better organization and navigation (a single thousand+ line file is too hard to work with imo).
+
+#+name: emacs-modules
+| Module Name              | Config Page                     |
+|--------------------------+---------------------------------|
+| =basic-config.el=        | [[file:./basic-config.or][Basic Configuration]]             |
+| =custom-elisp.el=        | [[file:custom-elisp.org][Custom Elisp]]                    |
+| =package-manager.el=     | [[file:package-manager.org][Package Manager]]                 |
+| =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]             |
+| =applications.el=        | [[file:packages/applications.org][Packages - Applications]]         |
+| =autocompletion.el=      | [[file:packages/autocompletion.org][Packages - Autocompletion]]       |
+| =programming.el=         | [[file:packages/programming.org][Packages - Programming]]          |
+| =visual-config.el=       | [[file:packages/visual-config.org][Packages - Visual Configuration]] |
+
+#+name: generate-modules
+#+begin_src emacs-lisp :tangle no :cache yes :var modules=emacs-modules :exports none
+(mapconcat (lambda (line)
+             (concat "\"" (string-trim (car line) "=" "=") "\""))
+           modules
+           " ")
+#+end_src
+
+#+RESULTS[2ec1a585257002a9590af943b334a302779c87d4]: generate-modules
+: "basic-config.el" "custom-elisp.el" "package-manager.el"
+
+#+begin_src emacs-lisp :noweb yes
+(dolist (module '(<<generate-modules()>>))
+  (load (expand-file-name module
+                          (expand-file-name "lisp" user-emacs-directory))))
+#+end_src

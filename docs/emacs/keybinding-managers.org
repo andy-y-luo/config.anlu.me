@@ -1,0 +1,73 @@
+#+title: Emacs - Keybinding Managers
+#+setupfile: ../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/keybinding-managers.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Keybinding Managers
+** Which-key
+With which-key, when you begin a keybind, Emacs will show you all keybinds you can press next in order to form a full keychord. Great you have a lot of keybinds and don't remember what is what.
+#+begin_src emacs-lisp
+(use-package which-key
+  :straight (:build t)
+  :defer t
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+#+end_src
+
+** General
+General is an awesome keybind manager. It's oriented towards keychords by default and provides some integrations with evil so that we can declare keybindings for certain states only.
+
+WIP
+
+** Evil
+
+Evil emulates most of vim's keybinds, as they're honestly more comfortable.
+#+begin_src emacs-lisp :noweb yes
+(use-package evil
+  :straight (:build t)
+  :after (general)
+  :init
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-C-i-jump nil)
+  (require 'evil-vars)
+  :config
+  <<evil-undefine-keys>>
+  (evil-mode 1)
+  (setq evil-want-fine-undo t) ; more granular undo with evil
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+#+end_src
+
+I want to undefine some default keybinds of Evil, to better match my workflow. Namely, I use space key and the comma as leaders for my keybinds, and I'm way too used to Emacs' ~C-t~, ~C-a~, ~C-e~, and ~C-y~.
+#+name: evil-undefine-keys
+#+begin_src emacs-lisp :tangle no
+(evil-global-set-key 'motion "t" 'evil-next-visual-line)
+(evil-global-set-key 'motion "s" 'evil-previous-visual-line)
+
+(general-define-key
+ :keymaps 'evil-motion-state-map
+ "SPC" nil
+ ","   nil)
+(general-define-key
+ :keymaps 'evil-insert-state-map
+ "C-t" nil)
+(general-define-key
+ :keymaps 'evil-insert-state-map
+ "U"   nil
+ "C-a" nil
+ "C-y" nil
+ "C-e" nil)
+#+end_src
+
+** Hydra
+[[https://github.com/abo-abo/hydra][Hydra]] is a simple menu creator for keybindings.
+#+begin_src emacs-lisp
+(use-package hydra
+  :straight (:build t)
+  :defer t)
+#+end_src

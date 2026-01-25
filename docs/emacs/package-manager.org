@@ -1,0 +1,41 @@
+#+title: Emacs - Package Manager
+#+setupfile: ../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/package-manager.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Package Manager
+** Repositories
+In addition to the default GNU repositories, I also want to use Melpa and org-mode's repositories. melpa is a community-maintained repository which contains an absurd amount of emacs packages.
+#+begin_src emacs-lisp
+(setq package-archives '(("melpa"  . "https://melpa.org/packages/")
+                         ("gnu"    . "https://elpa.gnu.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+#+end_src
+
+** Straight
+
+I use ~straight~ ([[https://github.com/radian-software/straight.el][GitHub]) for my package management. It integrates nicely with ~use-package~ and also allows for specifying where to retrieve packages that are not found on the above repositories (such as directly from GitHub and other online Git repositories).
+First, let’s bootstrap straight.
+#+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+We finally come to the ~use-package~ installation. This is done like so:
+#+begin_src emacs-lisp
+(straight-use-package '(use-package :build t))
+#+end_src

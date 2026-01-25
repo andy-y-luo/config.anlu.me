@@ -1,0 +1,215 @@
+#+title: Emacs - Basic Configuration
+#+setupfile: ../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/basic-config.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Basic Configuration
+** Early initialization
+
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle ~/.config/emacs/early-init.el :mkdirp yes
+:header-args:emacs-lisp+: :exports code :results silent :lexical t
+:END:
+
+The early init file ~early-init.el~ is loaded before anything else in Emacs. By disabling some built-in features of Emacs, before they can even be loaded, Emacs is sped up a little.
+#+begin_src emacs-lisp :mkdirp yes
+(setq package-enable-at-startup nil
+      inhibit-startup-message   t
+      frame-resize-pixelwise    t  ; fine resize
+      package-native-compile    t) ; native compile packages
+(scroll-bar-mode -1)               ; disable scrollbar
+(tool-bar-mode -1)                 ; disable toolbar
+(tooltip-mode -1)                  ; disable tooltips
+(set-fringe-mode 10)               ; give some breathing room
+(menu-bar-mode -1)                 ; disable menubar
+(blink-cursor-mode 0)              ; disable blinking cursor
+#+end_src
+
+** Emacs behavior
+*** Editing text in Emacs
+Always get rid of trailing whitespace in files:
+#+begin_src emacs-lisp
+(add-hook 'before-save-hook #'whitespace-cleanup)
+#+end_src
+
+Don't add two spaces behind a full stop (why is this a default?):
+#+begin_src emacs-lisp
+(setq-default sentence-end-double-space nil)
+#+end_src
+
+There's a minor mode which provides a finer way of jumping from word to word: ~global-subword-mode~. In camelCase words, allow jumping at a finer level.
+#+begin_src emacs-lisp
+(global-subword-mode 1)
+#+end_src
+
+We want scrolling to be gradual (instead of changing half of the screen) whenever the cursor gets too high or low.
+#+begin_src emacs-lisp
+(setq scroll-conservatively 1000)
+#+end_src
+
+Default mode should be ~emacs-lisp-mode~.
+#+begin_src emacs-lisp
+(setq-default initial-major-mode 'emacs-lisp-mode)
+#+end_src
+
+**** Indentation
+Tabs for indentation brings out a host of problems. Stick with spaces.
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+(add-hook 'prog-mode-hook (lambda () (setq indent-tabs-mode nil)))
+#+end_src
+
+*** Programming modes
+Add a few other modes to fall under the category of "programming mode", so features like line numbers can also be enabled.
+#+name: line-number-modes-table
+| Modes      |
+|------------|
+| prog-mode  |
+| latex-mode |
+
+#+name: prog-modes-gen
+#+header: :cache yes :exports none :tangle no
+#+begin_src emacs-lisp :var modes=line-number-modes-table
+(mapconcat (lambda (mode) (format "%s-hook" (car mode)))
+           modes
+           " ")
+#+end_src
+**** Line numbers
+Line numbers simply make sense in a text editor.
+#+begin_src emacs-lisp
+(dolist (mode '(<<prog-modes-gen()>>))
+  (add-hook mode #'display-line-numbers-mode))
+#+end_src
+
+**** Folding code
+Most programming languages support folding code blocks based structure delimiters. ~hs-minor-mode~ enables that in Emacs.
+#+begin_src emacs-lisp
+(dolist (mode '(<<prog-modes-gen()>>))
+  (add-hook mode #'hs-minor-mode))
+#+end_src
+
+*** Stay clean, Emacs!
+To not have to wade through a sea of backup files in the same directories as the working files, we tell Emacs to keep its backup files to itself in a dedicated directory.
+#+begin_src emacs-lisp
+(setq backup-directory-alist `(("." . ,(expand-file-name ".tmp/backups/"
+                                                         user-emacs-directory)))
+      tramp-backup-directory-alist `(("." . ,(expand-file-name ".tmp/tramp-backups/"
+                                                               user-emacs-directory))))
+#+end_src
+
+We want to avoid the issue of LSP adding imports that point to the symlinks of backup files (tunneling through my home directory along the way). By forbidding Emacs to create symlinks for backups, this problem should be avoided.
+#+begin_src emacs-lisp
+(setq backup-by-copying t)
+#+end_src
+
+Custom configuration variables added by Emacs when changing options through the GUI should not be added to ~init.el~, have them be added to a dedicated file.
+#+begin_src emacs-lisp
+(setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file) ; Don’t forget to load it, we still need it
+  (load custom-file))
+#+end_src
+
+If we delete a file, we want it moved to the trash.
+#+begin_src emacs-lisp
+(setq delete-by-moving-to-trash t)
+#+end_src
+
+The scratch buffer always has some message at its beginning, I don’t want it!
+#+begin_src emacs-lisp
+(setq-default initial-scratch-message nil)
+#+end_src
+
+*** Stay polite, Emacs!
+Making us type out "yes" or "no" fully is not very polite, we're not made of time.
+#+begin_src emacs-lisp
+(if (version<= emacs-version "28")
+    (defalias 'yes-or-no-p 'y-or-n-p)
+  (setopt use-short-answers t))
+#+end_src
+
+Also impolite to keep a certain version of a file in its buffer when said file has changed on disk. By fixing this, note that if the buffer is modified and its changes haven't been saved, it will not automatically revert he buffer and your unsaved changes won't be lost.
+#+begin_src emacs-lisp
+(global-auto-revert-mode 1)
+#+end_src
+
+*** Misc
+Let’s raise Emacs undo memory to 10 MB, and make Emacs auto-save our files by default.
+#+begin_src emacs-lisp
+(setq undo-limit        100000000
+      auto-save-default t)
+#+end_src
+
+#+begin_src emacs-lisp
+(setq window-combination-resize t) ; take new window space from all other windows
+#+end_src
+
+** Personal information
+Emacs needs to know who I am! For various reasons by the way, some packages rely on these variables to know who it is talking to or dealing with, such as ~mu4e~ which will guess who you are if you haven’t set it up correctly.
+#+begin_src emacs-lisp
+(setq user-full-name       "Andy Luo"
+      user-real-login-name "Andy Luo"
+      user-login-name      "anlu"
+      user-mail-address    "andy@anlu.me")
+#+end_src
+
+** Visual configurations
+Don't let me hear OR see the bell.
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore)
+#+end_src
+
+Cursor should cover entire space of a character.
+#+begin_src emacs-lisp
+(setq x-stretch-cursor t)
+#+end_src
+
+When text is ellipsed, I want the ellipsis marker to be a single character of three dots. Let’s make it so:
+#+begin_src emacs-lisp
+(with-eval-after-load 'mule-util
+ (setq truncate-string-ellipsis "…"))
+#+end_src
+
+*** Modeline Modules
+I want the current date and time to be displayed,in an ISO-8601 style, although not exactly ISO-8601 (this is the best time format)
+#+begin_src emacs-lisp
+(require 'time)
+(setq display-time-format "%Y-%m-%d %H:%M")
+(display-time-mode 1) ; display time in modeline
+#+end_src
+
+Show column in addition to line number.
+#+begin_src emacs-lisp
+(column-number-mode)
+#+end_src
+
+*** Fonts
+Currently rocking [[https:jetbrains.com/lp/mono/][JetBrains Mono]] across most things
+#+begin_src emacs-lisp
+(defvar anlu/default-font-size 140
+  "Default font size.")
+
+(defvar anlu/default-font-name "JetBrains Mono"
+  "Default font.")
+
+(defun my/set-font ()
+  (when (find-font (font-spec :name anlu/default-font-name))
+    (set-face-attribute 'default nil
+                        :font anlu/default-font-name
+                        :height anlu/default-font-size)))
+
+(my/set-font)
+(add-hook 'server-after-make-frame-hook #'my/set-font)
+#+end_src
+
+*** Frame Title
+This is straight-up copied from [[https://tecosaur.github.io/emacs-config/config.html#window-title][TEC]]’s configuration. See their comment on the matter.
+#+begin_src emacs-lisp
+(setq frame-title-format
+      '(""
+        "%b"
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p) " ◉ %s" "  ●  %s - Emacs") project-name))))))
+#+end_src

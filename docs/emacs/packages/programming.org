@@ -1,0 +1,152 @@
+#+title: Emacs - Packages - Programming
+#+setupfile: ../../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/programming.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Programming
+** Tools
+*** Treesitter
+Treesit is a native Emacs [[https://tree-sitter.github.io/tree-sitter/][tree-sitter]] implementation which provides a very fast and flexible way of performing code-highlighting in Emacs. It is built-in in Emacs 29 and newer, and I just need to tweak a couple of variables to install grammars for different languages.
+#+begin_src emacs-lisp
+(use-package treesit
+  :defer t
+  :straight (:type built-in)
+  :hook ((bash-ts-mode c-ts-mode c++-ts-mode
+          html-ts-mode js-ts-mode typescript-ts-mode
+          json-ts-mode rust-ts-mode tsx-ts-mode python-ts-mode
+          css-ts-mode yaml-ts-mode) . lsp-deferred))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs
+  :after tree-sitter
+  :straight t
+  :custom (global-tree-sitter-mode t)
+  :init
+  (add-to-list 'treesit-extra-load-path
+               (expand-file-name "bin" tree-sitter-langs-grammar-dir)))
+
+(use-package treesit-auto
+  :after tree-sitter
+  :straight t
+  :config (global-treesit-auto-mode))
+#+end_src
+
+*** Flycheck
+FlyCheck is a syntax checker, more modern and actively maintained compared to FlyMake.
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :straight (:build t)
+    :defer t
+    :init
+    (global-flycheck-mode)
+    :config
+    (setq flycheck-emacs-lisp-load-path 'inherit)
+
+    ;; rerunning checks on every newline is a mote excessive
+    (delq 'new-line flycheck-check-syntax-automatically)
+    ;; also don't recheck on idle as often
+    (setq flycheck-idle-change-delay 2.0)
+
+    ;; for the above functionality, check syntax in a buffer that you switched to on briefly. Allows for quick refreshing of the syntax check state for several buffers
+    (setq flycheck-buffer-switch-check-intermediate-buffers t)
+
+    ;; display errors a little quicker (default is 0.9s)
+    (setq flycheck-display-errors-delay 0.2))
+#+end_src
+
+
+*** Eglot
+Seems like the built-in Eglot LSP client is lighter weight than lsp-mode. Less like a heavy IDE, more minimal.
+#+begin_src emacs-lisp
+  (use-package eglot
+    :straight (:type built-in))
+  (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :defer t
+  :straight (:build t)
+  :init (exec-path-from-shell-initialize))
+#+end_src
+
+*** Dape
+Dape is a debug adapter client for Emacs. Unfortunately ~dap-mode~ is tightly coupled with ~lsp-mode~ and we're using Eglot instead. Dape does not support ~launch.json~ files. If per project configuration is needed, use ~dir-locals~ and ~dape-command~.
+#+begin_src emacs-lisp
+  (use-package dape
+    :after eglot
+    :defer t
+    :straight (:build t)
+    :custom
+    (dape-breakpoint-global-mode +1))
+#+end_src
+
+** General Languages
+
+*** Python
+**** Ty
+As of Dec 2025, Astral has removed the "not ready for production use" wording from ~ty~ documentation. Seems like a good time to start trying it out.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+              '((python-base-mode) . ("ty" "server"))))
+#+end_src
+
+**** Ruff
+Blazing fast linter and formatter, and provides a language server, but we'll use it with FlyCheck instead (Eglot only supports one language server per mode).
+#+begin_src  emacs-lisp
+  (defun python-flycheck-setup ()
+    (flycheck-select-checker 'python-ruff))
+
+  (add-to-list 'flycheck-checkers 'python-ruff)
+  (add-hook 'python-base-mode-hook #'python-flycheck-setup 'append)
+
+#+end_src
+
+** Domain Specific Languages
+DSLs, or /Domain Specific Languages/ are languages dedicated to some very specific tasks, such as configuration languages, or non-general programming such as SQL.
+
+*** Makefiles
+Unfortunately makefiles require tabs for indentation.
+#+begin_src emacs-lisp
+  (defun my/local-tab-indent ()
+    (setq-local indent-tabs-mode 1))
+  (add-hook 'makefile-mode-hook #'my/local-tab-indent)
+#+end_src
+
+*** SSH config files
+#+begin_src emacs-lisp
+  (use-package ssh-config-mode
+    :defer t
+    :straight (:build t))
+#+end_src
+
+*** TOML
+#+begin_src emacs-lisp
+  (use-package toml-mode
+    :straight (:build t)
+    :defer t)
+#+end_src
+
+*** YAML
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :defer t
+    :straight (:build t)
+    :mode "\\.yml\\'"
+    :mode "\\.yaml\\'")
+#+end_src
+
+*** Terraform (HCL)
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :straight (:build t)
+    :defer t
+    :custom (terraform-indent-level 2)
+    :config
+    (defun my/terraform-mode-init()
+      (outline-minor-mode 1))
+    (add-hook 'terraform-mode-hook 'my/terraform-mode-init))
+#+end_src

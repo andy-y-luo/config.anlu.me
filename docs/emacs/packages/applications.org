@@ -1,0 +1,26 @@
+#+title: Emacs - Packages - Applications
+#+setupfile: ../../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/applications.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+* Applications
+** Project Management
+*** Jujutsu
+WIP
+
+*** Project.el
+WIP
+
+*** Magit
+Magit is an awesome wrapper around git for Emacs!
+#+begin_src emacs-lisp
+(use-package magit
+  :straight (:build t)
+  :defer t
+  :init
+  (setq forge-add-default-bindings nil)
+  :config
+  (add-hook 'magit-process-find-password-functions 'magit-process-password-auth-source)
+  (setopt magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
