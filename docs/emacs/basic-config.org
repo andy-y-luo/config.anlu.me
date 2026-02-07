@@ -183,25 +183,6 @@ Show column in addition to line number.
 (column-number-mode)
 #+end_src
 
-*** Fonts
-Currently rocking [[https:jetbrains.com/lp/mono/][JetBrains Mono]] across most things
-#+begin_src emacs-lisp
-(defvar anlu/default-font-size 140
-  "Default font size.")
-
-(defvar anlu/default-font-name "JetBrains Mono"
-  "Default font.")
-
-(defun my/set-font ()
-  (when (find-font (font-spec :name anlu/default-font-name))
-    (set-face-attribute 'default nil
-                        :font anlu/default-font-name
-                        :height anlu/default-font-size)))
-
-(my/set-font)
-(add-hook 'server-after-make-frame-hook #'my/set-font)
-#+end_src
-
 *** Frame Title
 This is straight-up copied from [[https://tecosaur.github.io/emacs-config/config.html#window-title][TEC]]’s configuration. See their comment on the matter.
 #+begin_src emacs-lisp
