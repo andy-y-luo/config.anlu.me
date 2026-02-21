@@ -96,12 +96,3 @@ Solaire-mode applies a subtle but useful tweak to your current colour scheme: th
   :straight (:build t)
   :init (solaire-global-mode +1))
 #+end_src
-
-** Theme
-Currently rocking Everforest Light in most places right now.
-#+begin_src emacs-lisp
-(straight-use-package
-  '(everforest :type git :repo "https://github.com/Theory-of-Everything/everforest-emacs.git"))
-
-(load-theme 'everforest-hard-dark t)
-#+end_src
