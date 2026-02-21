@@ -103,5 +103,5 @@ Currently rocking Everforest Light in most places right now.
 (straight-use-package
   '(everforest :type git :repo "https://github.com/Theory-of-Everything/everforest-emacs.git"))
 
-(load-theme 'everforest-hard-light t)
+(load-theme 'everforest-hard-dark t)
 #+end_src

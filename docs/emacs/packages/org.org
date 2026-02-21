@@ -1,0 +1,41 @@
+#+title: Emacs - Packages - Org Mode
+#+setupfile: ../../headers
+#+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
+#+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/org.el
+#+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
+
+Org is a powerful and extensible framework for text processing, driven by workflows. It's used to write anything: notes, todos, literate programs, and more!
+#+begin_src emacs-lisp
+  (use-package org
+    :straight t
+    :defer t
+    :hook ((org-mode . visual-line-mode)
+           (org-mode . org-num-mode))
+    :init
+    (auto-fill-mode -1)
+    :config
+    (require 'org-protocol)
+    (setq org-directory "~/org"
+          org-default-notes-file (expand-file-name "notes.org" org-directory))
+    <<org-capture>>
+   )
+#+end_src
+
+I'm setting up org-capture for some common workflows (e.g. todos)
+
+#+name: org-capture
+#+header: :exports none :cache yes :tangle no
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(
+          ("g" "General To-Do"
+           entry (file+headline "~/org/todos.org" "General Tasks")
+           "* TODO [#B] %?\n:Created: %T\n "
+           :empty-lines 0)
+          ))
+  ;; TODO states
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i@/!)" "VERIFYING(v!)" "BLOCKED(b@)"  "|" "DONE(d!)" "OBE(o@!)" "WONT-DO(w@/!)" )
+          ))
+
+#+end_src

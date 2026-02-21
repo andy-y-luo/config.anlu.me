@@ -56,6 +56,7 @@ The configuration is split between files for better organization and navigation 
 | =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]             |
 | =applications.el=        | [[file:packages/applications.org][Packages - Applications]]         |
 | =autocompletion.el=      | [[file:packages/autocompletion.org][Packages - Autocompletion]]       |
+| =org.el=                 | [[./packages/org.org][Packages - Org]]                  |
 | =programming.el=         | [[file:packages/programming.org][Packages - Programming]]          |
 | =visual-config.el=       | [[file:packages/visual-config.org][Packages - Visual Configuration]] |
 
