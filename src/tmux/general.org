@@ -1,0 +1,40 @@
+#+title: Tmux - General
+#+setupfile: ../headers
+#+property: header-args:conf  :mkdirp yes :lexical t :exports code
+#+property: header-args:conf+ :tangle ~/.config/tmux/tmux.conf
+#+property: header-args:conf+ :mkdirp yes :noweb no-export
+
+* General / Base Settings
+
+** Prefix key
+Remap prefix from ~C-b~ to ~C-a~ for easier reach.
+#+begin_src conf
+unbind C-b
+set-option -g prefix C-a
+bind-key C-a send-prefix
+#+end_src
+
+** Splitting panes
+Intuitive split commands using ~|~ and ~-~.
+#+begin_src conf
+bind | split-window -h
+bind - split-window -v
+unbind '"'
+unbind %
+#+end_src
+
+** Fast pane switching
+Switching panes happens frequently, I don't want to trigger the prefix key all the time. I'll use ~M-<direction>~ to go where I want.
+#+begin_src conf
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+#+end_src
+
+** Window behaviour
+Don't rename windows automatically; start window numbering at ~1~.
+#+begin_src conf
+set-option -g allow-rename off
+set-option -g base-index 1
+#+end_src
