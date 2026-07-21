@@ -6,6 +6,17 @@
 
 * General / Base Settings
 
+** Terminal / mouse behavior
+I want to be able to scroll, resize, switch panes/wins with the mouse.
+#+begin_src conf
+set -g mouse on
+#+end_src
+
+Set correct $TERM for colors & keybindings.
+#+begin_src conf
+set -g default-terminal "tmux-256color"
+#+end_src
+
 ** Prefix key
 Remap prefix from ~C-b~ to ~C-a~ for easier reach.
 #+begin_src conf
@@ -14,7 +25,7 @@ set-option -g prefix C-a
 bind-key C-a send-prefix
 #+end_src
 
-** Splitting panes
+** Pane behavior
 Intuitive split commands using ~|~ and ~-~.
 #+begin_src conf
 bind | split-window -h
@@ -23,13 +34,17 @@ unbind '"'
 unbind %
 #+end_src
 
-** Fast pane switching
 Switching panes happens frequently, I don't want to trigger the prefix key all the time. I'll use ~M-<direction>~ to go where I want.
 #+begin_src conf
 bind -n M-Left select-pane -L
 bind -n M-Right select-pane -R
 bind -n M-Up select-pane -U
 bind -n M-Down select-pane -D
+#+end_src
+
+Start pane numbering at ~1~.
+#+begin_src conf
+set-option -g pane-base-index 1
 #+end_src
 
 ** Window behaviour
