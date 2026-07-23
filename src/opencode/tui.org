@@ -1,0 +1,22 @@
+#+title: OpenCode - TUI Config
+#+setupfile: ../headers
+#+property: header-args:json  :mkdirp yes :exports code
+#+property: header-args:json+ :tangle ~/.config/opencode/tui.json
+#+property: header-args:json+ :mkdirp yes :noweb no-export
+
+* TUI Config
+Tangles to =tui.json=. See [[https://opencode.ai/docs/config/#tui][TUI schema]].
+
+** Base
+#+begin_src json
+{
+  "$schema": "https://opencode.ai/tui.json"
+}
+#+end_src
+
+** TODO Theme
+** TODO Scroll speed / acceleration
+** TODO Diff style
+** TODO Mouse
+** TODO Attention (desktop notifications & sounds)
+** TODO Keybinds overrides

@@ -1,0 +1,15 @@
+#+title: OpenCode Configuration
+#+setupfile: ../headers
+
+* OpenCode Configuration
+
+** Introduction
+Literate configuration for [[https://opencode.ai][OpenCode]]. Each module tangles to its target under =~/.config/opencode/=.
+
+** Modules
+#+name: opencode-modules
+| Tangle target   | Config Page             |
+|-----------------+-------------------------|
+| =opencode.json= | [[file:config.org][Server / runtime config]] |
+| =tui.json=      | [[file:tui.org][TUI config]]              |
+| =AGENTS.md=     | [[file:agents.org][Global rules]]            |

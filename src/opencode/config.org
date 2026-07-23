@@ -1,0 +1,27 @@
+#+title: OpenCode - Server / Runtime Config
+#+setupfile: ../headers
+#+property: header-args:json  :mkdirp yes :exports code
+#+property: header-args:json+ :tangle ~/.config/opencode/opencode.json
+#+property: header-args:json+ :mkdirp yes :noweb no-export
+
+* Server / Runtime Config
+Tangles to =opencode.json=. See [[https://opencode.ai/docs/config][config schema]].
+
+** Base
+#+begin_src json
+{
+  "$schema": "https://opencode.ai/config.json"
+}
+#+end_src
+
+** TODO Model & provider defaults
+** TODO Permissions
+** TODO Server (port, hostname, mdns, cors)
+** TODO Shell
+** TODO Tools
+** TODO Compaction
+** TODO Watcher ignore patterns
+** TODO MCP servers
+** TODO Plugins
+** TODO Instructions (paths/globs to load)
+** TODO Themes / keybinds (legacy, prefer tui.json)

@@ -1,0 +1,22 @@
+#+title: OpenCode - Global Rules (AGENTS.md)
+#+setupfile: ../headers
+#+property: header-args:markdown  :mkdirp yes :exports code
+#+property: header-args:markdown+ :tangle ~/.config/opencode/AGENTS.md
+#+property: header-args:markdown+ :mkdirp yes :noweb no-export
+
+* Global Rules
+Tangles to =~/.config/opencode/AGENTS.md=. Personal, cross-project instructions for all opencode sessions. See [[https://opencode.ai/docs/rules][rules docs]].
+
+** Base
+#+begin_src markdown
+# OpenCode — Global Rules
+
+Personal rules applied to every session. Project-level =AGENTS.md= files override these.
+
+#+end_src
+
+** TODO Communication style
+** TODO Code style preferences
+** TODO Tooling defaults (formatter, lsp, etc.)
+** TODO Workflow / verification habits
+** TODO Things to avoid
