@@ -1,0 +1,16 @@
+#+title: Tmux Configuration
+#+setupfile: ../headers
+#+property: header-args:conf  :mkdirp yes :lexical t :exports code
+#+property: header-args:conf+ :tangle ~/.config/tmux/tmux.conf
+#+property: header-args:conf+ :mkdirp yes :noweb no-export
+
+* Tmux Configuration
+
+** Introduction
+Literate configuration for [[https://github.com/tmux/tmux][Tmux]]. The single source file tangles to =~/.config/tmux/tmux.conf=.
+
+** Modules
+#+name: tmux-modules
+| Tangle target   | Config Page             |
+|-----------------+-------------------------|
+| =tmux.conf=     | [[file:general.org][General / base settings]]  |
