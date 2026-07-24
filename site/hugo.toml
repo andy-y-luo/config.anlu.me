@@ -6,6 +6,14 @@ copyright = "Andy Luo"
 
 disablePathToLower = true
 
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    weight = 1
+
 [outputFormats]
   [outputFormats.txt]
     mediaType = "text/plain"
@@ -36,7 +44,6 @@ disablePathToLower = true
   BookDateFormat = "January 2, 2006"
   BookPortableLinks = true
   BookRepo = "https://github.com/andy-y-luo/config.anlu.me"
-  BookEditLink = "{{ .Site.Params.BookRepo }}/edit/main/{{ .Path }}"
 
 [menu]
   [[menu.home]]

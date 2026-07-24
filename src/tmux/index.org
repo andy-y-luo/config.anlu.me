@@ -11,6 +11,6 @@ Literate configuration for [[https://github.com/tmux/tmux][Tmux]]. The single so
 
 ** Modules
 #+name: tmux-modules
-| Tangle target   | Config Page             |
-|-----------------+-------------------------|
-| =tmux.conf=     | [[file:general.org][General / base settings]]  |
+| Tangle target | Config Page             |
+|---------------+-------------------------|
+| =tmux.conf=   | [[file:general.org][General / base settings]] |

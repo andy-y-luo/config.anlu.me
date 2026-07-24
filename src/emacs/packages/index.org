@@ -1,0 +1,18 @@
+#+title: Emacs - Packages
+#+setupfile: ../../headers
+
+* Emacs - Packages
+
+** Introduction
+Per-package Emacs configuration. Each page tangles to its own =.el= file
+under =~/.config/emacs/lisp/=.
+
+** Modules
+#+name: emacs-packages
+| Module Name          | Config Page                     |
+|----------------------+---------------------------------|
+| =applications.el=    | [[file:applications.org][Applications]]                  |
+| =autocompletion.el=  | [[file:autocompletion.org][Autocompletion]]                |
+| =org.el=             | [[file:org.org][Org]]                           |
+| =programming.el=     | [[file:programming.org][Programming]]                  |
+| =visual-config.el=   | [[file:visual-config.org][Visual Configuration]]         |
