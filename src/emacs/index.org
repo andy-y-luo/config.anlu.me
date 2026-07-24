@@ -50,13 +50,13 @@ The configuration is split between files for better organization and navigation 
 #+name: emacs-modules
 | Module Name              | Config Page                     |
 |--------------------------+---------------------------------|
-| =basic-config.el=        | [[file:./basic-config.or][Basic Configuration]]             |
+| =basic-config.el=        | [[file:basic-config.org][Basic Configuration]]             |
 | =custom-elisp.el=        | [[file:custom-elisp.org][Custom Elisp]]                    |
 | =package-manager.el=     | [[file:package-manager.org][Package Manager]]                 |
 | =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]             |
 | =applications.el=        | [[file:packages/applications.org][Packages - Applications]]         |
 | =autocompletion.el=      | [[file:packages/autocompletion.org][Packages - Autocompletion]]       |
-| =org.el=                 | [[./packages/org.org][Packages - Org]]                  |
+| =org.el=                 | [[file:packages/org.org][Packages - Org]]                  |
 | =programming.el=         | [[file:packages/programming.org][Packages - Programming]]          |
 | =visual-config.el=       | [[file:packages/visual-config.org][Packages - Visual Configuration]] |
 
