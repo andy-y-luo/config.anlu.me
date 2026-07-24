@@ -1,0 +1,16 @@
+{{- /*
+  Inject MathJax so any $...$ / $$...$$ fragments (rendered as raw HTML
+  by ox-hugo) render client-side without needing a TeX install in CI.
+  This replaces the `tex:dvisvgm` path in src/headers for the docs site.
+*/ -}}
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath:  [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
