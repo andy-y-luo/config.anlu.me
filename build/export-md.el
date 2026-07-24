@@ -36,10 +36,30 @@
   "Absolute path to the literate config source tree (src/).")
 
 ;; --- Bootstrap -----------------------------------------------------------
+;;
+;; All of the steps below are no-ops if a user has already bootstrapped
+;; Emacs -- e.g. with straight.el. This keeps the script usable both
+;; from CI (`emacs -Q --batch`) and from a running user Emacs session,
+;; and avoids the "package.el was loaded when straight.el was already
+;; loaded" warning.
+;;
+;; Users with a non-`-Q' init can also silence that warning globally
+;; by adding `(setq package-enable-at-startup nil)' to their
+;; early-init.el.
 
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+(unless (featurep 'package)
+  (require 'package))
+
+(unless (assoc "melpa" package-archives)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/") t))
+
+;; package-initialize is idempotent, but skipping it when straight (or
+;; another manager) has already initialized packages avoids the
+;; double-initialization warning.
+(unless (and (boundp 'package--initialized) package--initialized)
+  (package-initialize))
+
 (unless (package-installed-p 'ox-hugo)
   (package-refresh-contents)
   (package-install 'ox-hugo))
