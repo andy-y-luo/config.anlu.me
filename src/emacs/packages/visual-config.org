@@ -6,6 +6,12 @@
 
 * Visual Configuration
 ** Fringe
+
+Let's keep the left fringe always showing and hide the right fringe.
+#+begin_src emacs-lisp
+(fringe-mode '(4 . 0))
+#+end_src
+
 It’s nice to know which lines were modified since the last commit in a file.
 #+begin_src emacs-lisp
 (use-package git-gutter-fringe

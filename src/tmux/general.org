@@ -1,8 +1,10 @@
-#+title: Tmux - General
+#+title: Tmux
 #+setupfile: ../headers
 #+property: header-args:conf  :mkdirp yes :lexical t :exports code
 #+property: header-args:conf+ :tangle ~/.config/tmux/tmux.conf
 #+property: header-args:conf+ :mkdirp yes :noweb no-export
+
+I'm using Tmux to run multiple terminal sessions inside a single window. The session persistence feature is nice, and I can juggle multiple workstreams at once through it.
 
 * General / Base Settings
 
