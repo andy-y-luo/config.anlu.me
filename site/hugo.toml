@@ -1,0 +1,38 @@
+baseURL = 'http://localhost/'
+title = "Anlu's Dotfiles"
+copyright = "[Andy Luo](https://anlu.me) — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)"
+
+# Hugo module imports (theme fetched via Go module proxy)
+[module]
+[[module.imports]]
+  path = 'github.com/alex-shpak/hugo-book'
+
+# Book configuration
+disablePathToLower = true
+enableGitInfo = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.tableOfContents]
+  startLevel = 1
+
+[markup.highlight]
+  style = 'base16-snazzy'
+
+# Top-right menu on the landing page
+[menu]
+[[menu.home]]
+  name = 'Documentation'
+  pageRef = '/docs/'
+  weight = 10
+
+# Theme parameters
+[params]
+  BookTheme = 'light'
+  BookSection = 'docs'
+  BookSearch = true
+  BookComments = false
+  BookPortableLinks = false
+  BookServiceWorker = 'precache'
+  BookTranslatedOnly = false
