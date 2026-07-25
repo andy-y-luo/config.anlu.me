@@ -9,7 +9,7 @@
 It’s nice to know which lines were modified since the last commit in a file.
 #+begin_src emacs-lisp
 (use-package diff-hl
-  :straight (:built t)
+  :straight (:build t)
   :custom
   (diff-hl-fringe-bmp-function #'diff-hl-fringe-bmp-from-type)
   :hook ((prog-mode . diff-hl-mode)
