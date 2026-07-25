@@ -67,9 +67,11 @@ Seems like the built-in Eglot LSP client is lighter weight than lsp-mode. Less l
 
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
-  :defer t
   :straight (:build t)
-  :init (exec-path-from-shell-initialize))
+  :custom
+  (exec-path-from-shell-variables '("PATH" "MANPATH" "SSH_AUTH_SOCK" "SSH_AGENT_PID"))
+  :init
+  (exec-path-from-shell-initialize))
 #+end_src
 
 *** Dape

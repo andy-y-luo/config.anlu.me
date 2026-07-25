@@ -20,7 +20,8 @@ It’s nice to know which lines were modified since the last commit in a file.
   (set-face-attribute 'diff-hl-insert nil :background nil)
   (set-face-attribute 'diff-hl-delete nil :background nil)
   (set-face-attribute 'diff-hl-change nil :background nil)
-  (add-hook 'magit-pre-refresh-hook #'diff-hl-update))
+  (with-eval-after-load 'magit
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 #+end_src
 
 ** Icons
