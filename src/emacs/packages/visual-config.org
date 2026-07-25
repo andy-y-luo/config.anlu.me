@@ -6,20 +6,21 @@
 
 * Visual Configuration
 ** Fringe
-
-Let's keep the left fringe always showing and hide the right fringe.
-#+begin_src emacs-lisp
-(fringe-mode '(4 . 0))
-#+end_src
-
 It’s nice to know which lines were modified since the last commit in a file.
 #+begin_src emacs-lisp
-(use-package git-gutter-fringe
-  :straight (:build t)
-  :hook ((prog-mode     . git-gutter-mode)
-         (org-mode      . git-gutter-mode)
-         (markdown-mode . git-gutter-mode)
-         (latex-mode    . git-gutter-mode)))
+(use-package diff-hl
+  :straight (:built t)
+  :custom
+  (diff-hl-fringe-bmp-function #'diff-hl-fringe-bmp-from-type)
+  :hook ((prog-mode . diff-hl-mode)
+         (org-mode . diff-hl-mode)
+         (markdown-mode . diff-hl-mode)
+         (latex-mode . diff-hl-mode))
+  :config
+  (set-face-attribute 'diff-hl-insert nil :background nil)
+  (set-face-attribute 'diff-hl-delete nil :background nil)
+  (set-face-attribute 'diff-hl-change nil :background nil)
+  (add-hook 'magit-pre-refresh-hook #'diff-hl-update))
 #+end_src
 
 ** Icons

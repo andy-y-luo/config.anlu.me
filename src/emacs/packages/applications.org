@@ -6,12 +6,6 @@
 
 * Applications
 ** Project Management
-*** Jujutsu
-WIP
-
-*** Project.el
-WIP
-
 *** Magit
 Magit is an awesome wrapper around git for Emacs!
 #+begin_src emacs-lisp
