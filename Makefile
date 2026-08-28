@@ -8,11 +8,11 @@ tangle:
 		emacs -Q --batch -l build/tangle.el -- src; \
 	fi
 
-export-hugo:
+export-site:
 	mkdir -p site/content
 	find site/content -name '*.md' -delete
 	emacs -Q --batch -l build/export_hugo.el
 	find site/content -type d -empty -delete
 
-serve-hugo:
+serve-site:
 	cd site && hugo serve
