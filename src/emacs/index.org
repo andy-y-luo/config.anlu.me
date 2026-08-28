@@ -1,10 +1,10 @@
-#+title: Emacs Configuration
+#+title: Emacs
 #+setupfile: ../headers
 #+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
 #+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/init.el
 #+property: header-args:emacs-lisp+ :mkdirp yes :noweb no-export
 
-* Emacs Configuration
+* Emacs
 
 ** Introduction
 My journey of using Emacs begins here, with configuring a vanilla installation. These configurations will follow the literate programming paradigm (you're welcome future me), and uses `org` tangling to spit out the actual configuration files.
@@ -47,11 +47,11 @@ The configuration is split between files for better organization and navigation 
 | =custom-elisp.el=        | [[file:custom-elisp.org][Custom Elisp]]                    |
 | =package-manager.el=     | [[file:package-manager.org][Package Manager]]                 |
 | =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]             |
-| =applications.el=        | [[file:packages/applications.org][Packages - Applications]]         |
-| =autocompletion.el=      | [[file:packages/autocompletion.org][Packages - Autocompletion]]       |
-| =org.el=                 | [[file:packages/org.org][Packages - Org]]                  |
-| =programming.el=         | [[file:packages/programming.org][Packages - Programming]]          |
-| =visual-config.el=       | [[file:packages/visual-config.org][Packages - Visual Configuration]] |
+| =applications.el=        | [[file:packages/applications.org][Applications]]                     |
+| =autocompletion.el=      | [[file:packages/autocompletion.org][Autocompletion]]                |
+| =org.el=                 | [[file:packages/org.org][Org Mode]]                          |
+| =programming.el=         | [[file:packages/programming.org][Programming]]                    |
+| =visual-config.el=       | [[file:packages/visual-config.org][Visual Configuration]]          |
 
 
 This helper function will generate the module filenames represented in the table.

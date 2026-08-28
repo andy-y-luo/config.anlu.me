@@ -1,4 +1,4 @@
-#+title: Emacs - Packages - Org Mode
+#+title: Org Mode
 #+setupfile: ../../headers
 #+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
 #+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/org.el

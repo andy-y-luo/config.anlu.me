@@ -1,4 +1,4 @@
-#+title: Emacs - Package Manager
+#+title: Package Manager
 #+setupfile: ../headers
 #+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
 #+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/package-manager.el

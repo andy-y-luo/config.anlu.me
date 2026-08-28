@@ -1,4 +1,4 @@
-#+title: Emacs - Packages - Visual Configuration
+#+title: Visual Configuration
 #+setupfile: ../../headers
 #+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
 #+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/visual-config.el

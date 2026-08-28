@@ -1,4 +1,4 @@
-#+title: OpenCode - TUI Config
+#+title: TUI Config
 #+setupfile: ../headers
 #+property: header-args:json  :mkdirp yes :exports code
 #+property: header-args:json+ :tangle ~/.config/opencode/tui.json

@@ -1,7 +1,7 @@
-#+title: Emacs - Packages
+#+title: Packages
 #+setupfile: ../../headers
 
-* Emacs - Packages
+* Packages
 
 ** Introduction
 Per-package Emacs configuration. Each page tangles to its own =.el= file

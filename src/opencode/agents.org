@@ -1,4 +1,4 @@
-#+title: OpenCode - Global Rules (AGENTS.md)
+#+title: Global Rules
 #+setupfile: ../headers
 #+property: header-args:markdown  :mkdirp yes :exports code
 #+property: header-args:markdown+ :tangle ~/.config/opencode/AGENTS.md

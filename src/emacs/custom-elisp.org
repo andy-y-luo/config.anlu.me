@@ -1,4 +1,4 @@
-#+title: Emacs - Custom Elisp
+#+title: Custom Elisp
 #+setupfile: ../headers
 #+property: header-args:emacs-lisp  :mkdirp yes :lexical t :exports code
 #+property: header-args:emacs-lisp+ :tangle ~/.config/emacs/lisp/custom-elisp.el

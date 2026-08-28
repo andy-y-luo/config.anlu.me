@@ -1,4 +1,4 @@
-#+title: OpenCode - Server / Runtime Config
+#+title: Server / Runtime Config
 #+setupfile: ../headers
 #+property: header-args:json  :mkdirp yes :exports code
 #+property: header-args:json+ :tangle ~/.config/opencode/opencode.json

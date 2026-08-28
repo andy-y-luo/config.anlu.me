@@ -98,6 +98,12 @@ Every `.org` file starts with a title and pulls in the shared setup:
 #+setupfile: ../headers
 ```
 
+Page titles in `#+title:` use **only the leaf name** (e.g.
+`Programming`, `Global Rules`), never the breadcrumb (`Emacs - Packages -
+Programming`). The sidebar already nests under the section tree, so the
+directory path provides the context — restating it in the title makes
+every sidebar entry redundant.
+
 Tangle targets are declared **per-language via property drawers** on
 the file or on a heading, e.g. (from `src/tmux/general.org`):
 
