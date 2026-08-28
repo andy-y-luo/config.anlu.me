@@ -1,10 +1,20 @@
-;;; build/export-md.el --- Batch-export src/**/*.org to Hugo Markdown via ox-hugo
-;;
-;;; Usage:  emacs -Q --batch -l build/export-md.el
+;;; build/export_hugo.el --- Export every *.org under src/ to Hugo Markdown via ox-hugo
 ;;;
-;;; Walks every `src/<module>/' directory that has a Makefile (matching
-;;; the top-level src/Makefile's own auto-discovery rule), and for every
-;;; *.org file in such a module:
+;;; Usage:
+;;;   emacs -Q --batch -l build/export_hugo.el
+;;;
+;;; Takes no arguments: the export is all-or-nothing. Section paths are
+;;; derived from each file's location under src/, so exporting a subset
+;;; from a different walk root would mis-derive them. The whole tree
+;;; exports in a single Emacs invocation anyway.
+;;;
+;;; Walks src/ recursively, exporting every *.org file to Hugo
+;;; Markdown. There is no separate "module" concept: each file's
+;;; section path is derived from its path under src/ -- the first path
+;;; segment becomes the section root, and any further subdirs are
+;;; preserved verbatim.
+;;;
+;;; Per file:
 ;;;
 ;;;   1. find-file's the real source file so #+setupfile: ../headers
 ;;;      resolves relative to the file's directory.
@@ -12,9 +22,13 @@
 ;;;      (#+hugo_base_dir, #+hugo_section, #+export_file_name) so the
 ;;;      literate source files stay free of build concerns.
 ;;;   3. Calls org-hugo-export-to-md, which writes the .md to
-;;;      <site>/content/docs/<module>/<export-file-name>.md.
+;;;      <site>/content/docs/<section>/<export-file-name>.md.
 ;;;   4. Kills the buffer without saving -- the .org file is never
 ;;;      modified.
+;;;
+;;; Output filenames (including Hugo's `_index.md' section convention)
+;;; are decided by `my/export-hugo--output-name'. Files are written
+;;; with their final names; there is no post-export rename pass.
 ;;;
 ;;; The Hugo base dir is computed from the location of this script so
 ;;; the same script works locally and in CI.
@@ -32,8 +46,8 @@
 (defvar my/hugo-base-dir (expand-file-name "site" my/repo-root)
   "Absolute path to the Hugo project root (the site/ directory).")
 
-(defvar my/src-dir (expand-file-name "src" my/repo-root)
-  "Absolute path to the literate config source tree (src/).")
+(defvar my/src-root (expand-file-name "src" my/repo-root)
+  "Absolute path to the literate source tree.")
 
 ;; --- Bootstrap -----------------------------------------------------------
 ;;
@@ -72,53 +86,54 @@
       org-export-with-broken-links 'mark
       org-export-with-toc nil)
 
-;; --- Module discovery -----------------------------------------------------
+;; --- Output naming -------------------------------------------------------
 
-(defun my/find-modules ()
-  "Return a sorted list of module names (basenames of src/<module>/ dirs
-that have a Makefile)."
-  (let (modules)
-    (dolist (entry (directory-files my/src-dir nil "^[^.]" t))
-      (let* ((path (expand-file-name entry my/src-dir))
-             (makefile (expand-file-name "Makefile" path)))
-        (when (and (file-directory-p path) (file-exists-p makefile))
-          (push entry modules))))
-    (sort modules #'string<)))
+(defun my/export-hugo--output-name (base)
+  "Return the Hugo output basename for source basename BASE.
 
-(defun my/find-org-files (module)
-  "Return all *.org files under src/<MODULE>/, with editor cruft excluded."
+Hugo treats `_index.md' as a branch-bundle (section) page and
+`index.md' as a leaf-bundle page. A directory's index file must
+therefore be `_index.md', or the directory becomes a leaf bundle
+and its sibling pages stop being routable."
+  (if (string= base "index") "_index" base))
+
+;; --- Recursive walk -----------------------------------------------------
+
+(defun my/find-org-files (root)
+  "Return all *.org files under ROOT, with editor cruft excluded."
   (let (files)
-    (dolist (f (directory-files-recursively
-                (expand-file-name module my/src-dir) "\\.org$"))
+    (dolist (f (directory-files-recursively root "\\.org$"))
       (let ((name (file-name-nondirectory f)))
         (unless (or (string-prefix-p ".#" name)
                     (string-suffix-p "~" name))
           (push f files))))
     (sort files #'string<)))
 
-;; --- Per-file export -----------------------------------------------------
+;; --- Per-file export ----------------------------------------------------
 
-(defun my/export-one (module org-file)
-  "Export ORG-FILE (under src/<MODULE>/) to Hugo Markdown."
-  (let* ((rel-from-module
-          (file-relative-name org-file
-                              (expand-file-name module my/src-dir)))
-         ;; Preserve the packages/ subdirectory hierarchy.
-         (export-name
-          (let ((name (file-name-sans-extension
-                       (file-name-nondirectory rel-from-module))))
-            (if (string= name "index")
-                "_index"
-              ;; If the file lives under a subdir (e.g. packages/org.org),
-              ;; use just the basename -- the subdir is captured by the
-              ;; section path below.
-              (file-name-base name))))
-         (section
-          (concat "docs/" module
-                  (let ((dir (file-name-directory rel-from-module)))
-                    (if (or (null dir) (string= dir ""))
-                        ""
-                      (concat "/" (directory-file-name dir))))))
+(defun my/export-one (root org-file)
+  "Export ORG-FILE (under ROOT) to Hugo Markdown."
+  (let* ((rel-from-root (file-relative-name org-file root))
+         (path-parts (split-string rel-from-root "/" 'omit-nulls))
+         ;; Every source file must live in a module directory under
+         ;; src/. A file directly under src/ would make its own
+         ;; basename the section root (e.g. section "docs/foo.org"),
+         ;; so fail loudly instead of writing to a bogus path.
+         (_ (unless (cdr path-parts)
+              (error "%s sits directly under %s; every .org file must live in a module directory"
+                     rel-from-root root)))
+         ;; section root = first path segment
+         (module (car path-parts))
+         ;; preserve any deeper subdirs (e.g. packages/) under the section
+         (subdirs (cdr path-parts))
+         (mid-dirs (butlast subdirs))
+         (subdir-path
+          (if mid-dirs
+              (concat "/" (mapconcat #'identity mid-dirs "/"))
+            ""))
+         (export-name (my/export-hugo--output-name
+                       (file-name-base (car (last path-parts)))))
+         (section (concat "docs/" module subdir-path))
          (buf (find-file-noselect org-file)))
     (unwind-protect
         (with-current-buffer buf
@@ -148,25 +163,28 @@ that have a Makefile)."
         (kill-buffer buf)))))
 
 (defun my/export-all ()
-  "Export every *.org in every module to Hugo Markdown."
-  (let* ((modules (my/find-modules))
-         (total 0)
+  "Export every *.org under `my/src-root' to Hugo Markdown."
+  (unless (file-directory-p my/src-root)
+    (error "build/export_hugo.el: not a directory: %s" my/src-root))
+  (let* ((files (my/find-org-files my/src-root))
+         (total (length files))
+         (i 0)
          (failed 0))
-    (dolist (m modules)
-      (let ((files (my/find-org-files m)))
-        (message "[ox-hugo] module %s: %d file(s)" m (length files))
-        (dolist (f files)
-          (condition-case err
-              (progn
-                (my/export-one m f)
-                (setq total (1+ total))
-                (message "[ox-hugo]   %s -> OK" (file-relative-name f my/repo-root)))
-            (error
-             (setq failed (1+ failed))
-             (message "[ox-hugo]   %s -> FAILED: %s"
-                      (file-relative-name f my/repo-root)
-                      (error-message-string err)))))))
-    (message "[ox-hugo] done: %d exported, %d failed" total failed)
+    (message "[export-hugo] %d .org file(s) under %s" total my/src-root)
+    (dolist (f files)
+      (setq i (1+ i))
+      (condition-case err
+          (progn
+            (my/export-one my/src-root f)
+            (message "[export-hugo]   (%d/%d) %s -> OK"
+                     i total (file-relative-name f my/repo-root)))
+        (error
+         (setq failed (1+ failed))
+         (message "[export-hugo]   (%d/%d) %s -> FAILED: %s"
+                  i total (file-relative-name f my/repo-root)
+                  (error-message-string err)))))
+    (message "[export-hugo] done: %d exported, %d failed"
+             (- total failed) failed)
     (unless (zerop failed)
       (kill-emacs 1))))
 

@@ -8,7 +8,6 @@ site/public/
 site/resources/
 site/.hugo_build.lock
 
-# Generated module content (ox-hugo regenerates from src/**/*.org)
-# Hand-authored chrome pages (_index.md files) are explicitly preserved.
+# Generated module content (regenerated from src/**/*.org by
+# build/export_hugo.el)
 site/content/docs/**
-!site/content/docs/_index.md

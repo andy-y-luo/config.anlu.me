@@ -1,16 +1,15 @@
-.PHONY: tangle docs docs-tangle docs-build docs-clean
+.PHONY: tangle export-hugo
 
+MODULE ?=
 tangle:
-	$(MAKE) -C src tangle
+	@if [ -n "$(MODULE)" ]; then \
+		emacs -Q --batch -l build/tangle.el -- src/$(MODULE); \
+	else \
+		emacs -Q --batch -l build/tangle.el -- src; \
+	fi
 
-docs-tangle:
-	emacs -Q --batch -l build/export-md.el
-
-docs-build: docs-tangle
-	hugo --source site
-
-docs: docs-tangle
-	hugo server --source site
-
-docs-clean:
-	rm -rf site/content/docs/* site/resources
+export-hugo:
+	mkdir -p site/content/docs
+	find site/content/docs -name '*.md' -delete
+	emacs -Q --batch -l build/export_hugo.el
+	find site/content/docs -type d -empty -delete

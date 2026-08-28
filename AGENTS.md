@@ -8,53 +8,78 @@ with Emacs `org-babel` and are never committed.
 
 The repo is organized as a top-level `src/` directory containing one
 subdirectory per **config module** (each maps to a tool whose config
-lives under `~/.config/`). Every module has the same shape:
+lives under `~/.config/`). Each module is just a directory of `*.org`
+sources with per-file `:tangle` targets — there are no per-module
+`Makefile`s.
 
-```
-src/<module>/
-├── Makefile        # tangles every .org in this module
-├── tangle_file.sh  # helper invoked by the Makefile
-└── *.org           # one or more org sources; per-file :tangle targets
-```
+Plus shared bits at the repo root:
 
-Plus two shared bits at `src/`:
-
-- `Makefile` — finds every subdir with a `Makefile` and runs its
-  `tangle` target. New modules are picked up automatically.
-- `headers` — shared org setupfile pulled in via `#+setupfile: ../headers`
-  by every `*.org` file. Carries shared `#+property:` defaults.
+- `build/tangle.el` — single Emacs entry point that tangles every
+  `*.org` under a given directory recursively (one Emacs invocation
+  per `make tangle`).
+- `build/export_hugo.el` — single Emacs entry point that exports every
+  `*.org` under `src/` to Hugo Markdown via `ox-hugo`.
+- `src/headers` — shared org setupfile pulled in via
+  `#+setupfile: ../headers` by every `*.org` file. Carries shared
+  `#+property:` defaults.
 
 The actual filenames inside each module change as the config grows;
 treat the module list below as a current snapshot, not a contract.
 
 ## Build / tangle
 
-Tangling is the only build step. From the repo root:
+Two top-level commands, from the repo root:
 
 ```sh
-make -C src tangle
+make tangle       # tangle every *.org under src/ → ~/.config/...
+make export-hugo  # export every *.org under src/ → site/content/docs/...
 ```
 
-This walks every subdirectory of `src/` that has a `Makefile` and runs
-its `tangle` target. Each module's Makefile is identical:
-
-```make
-.PHONY: tangle
-tangle:
-	find . -name "*.org" -exec sh -c 'echo "[!] Tangling {}"; ./tangle_file.sh "{}"' \;
-```
-
-`tangle_file.sh` invokes Emacs in batch mode:
+To scope the tangle to a single module (or subdirectory):
 
 ```sh
-emacs -q --batch --eval "(require 'ob-tangle)" \
-      --eval "(setq org-confirm-babel-evaluate nil)" \
-      --eval "(org-babel-tangle-file \"$1\")"
+make tangle MODULE=tmux               # only src/tmux/
+make tangle MODULE=emacs/packages     # only src/emacs/packages/
 ```
 
-So tangling requires `emacs` on `$PATH`. The script uses `#!/bin/zsh`
-but is invoked by `find -exec sh`; it works under either shell, but
-keep the shebang as `zsh` for consistency with the existing files.
+Each target shells out to exactly one Emacs invocation.
+
+`export-hugo` is deliberately **not** scopeable. Section paths are
+derived from each file's location under `src/`, so walking a subtree
+instead would mis-derive them (`src/tmux/general.org` would land in a
+`docs/general.org/` section). The export is all-or-nothing, and the
+whole tree goes through in one invocation anyway. `build/export_hugo.el`
+takes no arguments and errors out if any `.org` file sits directly
+under `src/` rather than in a module directory.
+
+The export is Hugo-specific end to end — `ox-hugo` exporter, injected
+`#+hugo_*` keywords, Hugo TOML front matter in the output. It is not a
+general-purpose Markdown export, which is why both the target and the
+script carry `hugo` in their names. `build/tangle.el` does not, because
+tangling genuinely is Hugo-independent.
+
+Output filenames are decided at export time by
+`my/export-hugo--output-name` in `build/export_hugo.el`, which maps
+`index` → `_index` for Hugo's branch-bundle (section page) convention.
+Files are written with their final names; there is no post-export
+rename pass.
+
+`make export-hugo` wipes every `.md` under `site/content/docs/` before
+exporting and prunes empty directories afterwards, so it's always clean
+on re-run.
+
+`build/tangle.el` loads only the minimum Emacs needs:
+
+- `cl-lib`, `org`, `ob-tangle`, `ob-emacs-lisp`
+
+It does **not** load `ox-*` exporters (tangling never exports), nor
+non-stock Babel backends like `ob-conf` / `ob-sh` / `ob-json` (tangle
+walks block bodies and writes them; it never invokes execute-mode
+backends), nor any user init file (the `-Q` flag suppresses it).
+Failures are fail-fast: the first tangle error aborts the Emacs batch
+and `make` exits non-zero.
+
+Tangling requires `emacs` on `$PATH`.
 
 ## Org conventions
 
@@ -88,8 +113,8 @@ language's properties (see the `conf+` line above).
 1. Edit the `.org` source. Do **not** edit files under `~/.config/...`
    directly — they are generated and will be overwritten on the next
    tangle.
-2. Run `make -C src tangle` (or `make -C src/<module> tangle` to
-   target one module).
+2. Run `make tangle` (or `make tangle MODULE=<name>` to target one
+   module).
 3. Reload / restart the affected tool to pick up changes.
 
 ### Adding a new config file in an existing module
@@ -98,16 +123,15 @@ language's properties (see the `conf+` line above).
 2. Add `#+title:` and `#+setupfile: ../headers` headers.
 3. Set the `#+property: header-args:<lang> :tangle <abs-path>` (use
    `#+property: header-args:<lang>+` to append to existing defaults).
-4. Run `make -C src tangle`. The new file is picked up automatically
-   by the `find` in that module's Makefile — no Makefile change needed.
+4. Run `make tangle`. The new file is picked up automatically by the
+   recursive walk in `build/tangle.el` — no Makefile change needed.
 
 ### Adding a new module
 
-1. `mkdir src/<name>` and add a `Makefile` + `tangle_file.sh` copied
-   from an existing module (they are all identical).
-2. Add at least one `*.org` file with `#+setupfile: ../headers`.
-3. The top-level `src/Makefile` uses `wildcard */`, so the new module
-   is picked up automatically.
+1. `mkdir src/<name>` and add at least one `*.org` file with
+   `#+setupfile: ../headers`.
+2. The recursive walk in `build/tangle.el` picks up the new module
+   automatically; no Makefile change is needed.
 
 ## Per-module notes
 
@@ -138,6 +162,27 @@ same style for new commits.
   but if you ever add output here for testing, clean it up).
 - Don't add a `.gitignore` for tangled output — tangled files are
   written outside the repo by design.
-- Don't change the `tangle_file.sh` shebang from `#!/bin/zsh`.
+- Don't add per-module `Makefile` or `tangle_file.sh` files —
+  `build/tangle.el` handles every module from a single Emacs
+  invocation. New modules are picked up automatically.
+- Don't add a separate rename/post-processing pass for `_index.md`.
+  Output naming is decided at export time by
+  `my/export-hugo--output-name`; a second pass reintroduces a window
+  where `site/content/docs/` is in a broken state (a directory with
+  `index.md` instead of `_index.md` becomes a leaf bundle and its
+  sibling pages stop being routable).
+- Don't add a `<dir>`/`MODULE` argument to `build/export_hugo.el`.
+  Section paths are derived from each file's position under `src/`;
+  a different walk root mis-derives them.
+- Don't comma-separate list-valued ox-hugo keywords (`#+KEYWORDS:`,
+  `#+HUGO_TAGS:`, `#+HUGO_CATEGORIES:`). They're **space**-separated;
+  use double quotes for multi-word entries. ox-hugo parses them via
+  `org-babel-parse-header-arguments`, where `,` is the elisp unquote
+  reader macro, so `a, b` silently becomes nested garbage
+  (`["a", [",", "b"]]`) in the front matter instead of failing.
+- Don't add a `docs/_index.md` landing page. The docs section has no
+  landing page by design — every `.md` under `site/content/docs/` is
+  generated from an org source, and the site's only landing page is
+  `site/content/_index.md`.
 - Don't remove `#+setupfile: ../headers` from org files; it carries
   the shared `#+property:` defaults (including `noweb`).

@@ -44,7 +44,7 @@ jobs:
           "
 
       - name: Export org to Hugo Markdown
-        run: emacs -Q --batch -l build/export-md.el
+        run: make export-hugo
 
       - name: Set up Hugo
         uses: peaceiris/actions-hugo@v3
