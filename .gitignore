@@ -10,4 +10,4 @@ site/.hugo_build.lock
 
 # Generated module content (regenerated from src/**/*.org by
 # build/export_hugo.el)
-site/content/docs/**
+site/content/**
