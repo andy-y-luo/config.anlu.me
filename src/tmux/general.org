@@ -71,26 +71,23 @@ set -g set-titles off
 #+end_src
 
 ** Status line
-The bottom-of-screen status bar. Refresh every 5s so the clock stays
-current, and left-align the window list.
+The bottom-of-screen status bar. Left-align the windows.
 #+begin_src conf
-set -g status-interval 5
 set -g status-justify left
 #+end_src
 
-=status-left= shows the session name; =status-right= shows a custom
-red "Z" when the active pane is zoomed (via the =window_zoomed_flag=
-format), followed by the current key mode from the =tmux-mode-indicator=
-plugin. Both have a leading/trailing space for edge padding. Colors
-come from the [[https://github.com/theorytoe/everforest-emacs][everforest hard oldlight]] emacs theme, bar =bg/fg=
-match the active modeline (=#edf0cd= / =#9da9a0=); the session name
-uses the green accent (=#8da101=); the zoom "Z" uses the theme red
-(=#f85552=).
+=status-left= shows the session name; =status-right= shows a "Z"
+when the active pane is zoomed followed by the current key mode
+(via =tmux-mode-indicator= plugin).
+
+Colors follow the terminal theme: =bg= / =fg= use the terminal default; the
+session name uses the terminal's =green= accent; the zoom "Z" uses
+the terminal's =red= accent.
 #+begin_src conf
 set -g status-left-length 32
-set -g status-left  ' #[fg=#8da101,bold]#S '
-set -g status-right ' #{?window_zoomed_flag,#[fg=#f85552]Z ,}#{tmux_mode_indicator} '
-set -g status-style 'bg=#edf0cd,fg=#9da9a0'
+set -g status-left  ' #[fg=green,bold]#S '
+set -g status-right ' #{?window_zoomed_flag,#[fg=red]Z ,}#{tmux_mode_indicator} '
+set -g status-style 'bg=default,fg=default'
 #+end_src
 
 In the window list, the current window is wrapped in brackets; all
@@ -113,14 +110,16 @@ set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'MunifTanjim/tmux-mode-indicator'
 #+end_src
 
-Mode indicator styles — each mode maps to an everforest primary, with
-the theme bg cream as fg on cool colors and the theme fg dark grey on
-yellow for legibility.
+Mode indicator styles — each mode maps to an ANSI accent from the
+terminal theme: prefix → =blue=, copy → =yellow=, sync → =red=,
+empty → =green=. Background is =default= so the chip blends with
+the bar; foreground is the accent color so the text carries the
+theme color while staying legible.
 #+begin_src conf
-set -g @mode_indicator_prefix_mode_style 'bg=#3a94c5,fg=#fff9e8'
-set -g @mode_indicator_copy_mode_style   'bg=#dfa000,fg=#5c6a72'
-set -g @mode_indicator_sync_mode_style   'bg=#f85552,fg=#fff9e8'
-set -g @mode_indicator_empty_mode_style  'bg=#35a77c,fg=#fff9e8'
+set -g @mode_indicator_prefix_mode_style 'fg=blue,bg=default'
+set -g @mode_indicator_copy_mode_style   'fg=yellow,bg=default'
+set -g @mode_indicator_sync_mode_style   'fg=red,bg=default'
+set -g @mode_indicator_empty_mode_style  'fg=green,bg=default'
 #+end_src
 
 Initialize TPM — this must be the last line of the config so bindings
