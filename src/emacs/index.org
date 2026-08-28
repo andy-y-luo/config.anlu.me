@@ -22,14 +22,7 @@ This configuration makes heavy use of the [[https://orgmode.org/manual/Noweb-Ref
   <<print-hello>>)
 #+end_src
 
-Will instead appear as
-#+begin_src emacs-lisp :noweb yes
-(defun hello ()
-  <<generate-docstring()>>
-  <<print-hello>>)
-#+end_src
-
-This is because I have the block of code below named ~generate-docstring~ which generates an output, which replaces its noweb tag. You can recognize noweb snippets generating code with the parenthesis. Often, such blocks aren’t visible in my HTML exports, but you can still see them if you open the actual org source file.
+The noweb block with parenthesis (~<<generate-docstring()>>~) references the block of code below by name. Because there are paraenthesis, the block is executed and its output replaces its noweb tag. Often, such blocks aren’t visible in my HTML exports, but you can still see them if you open the actual org source file.
 #+name: generate-docstring
 #+begin_src emacs-lisp
 (concat "\""
