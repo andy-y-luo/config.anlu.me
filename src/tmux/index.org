@@ -75,7 +75,9 @@ set -g set-titles off
 #+end_src
 
 *** Status line
-The bottom-of-screen status bar. Left-align the windows.
+The bottom-of-screen status bar. Left-align the window names. Overall, I want a
+clean, minimal status line. Nothing flashy or distracting. It should convey just
+the right amount of useful information.
 #+begin_src conf
 set -g status-justify left
 #+end_src
@@ -84,7 +86,7 @@ set -g status-justify left
 when the active pane is zoomed followed by the current key mode
 (via =tmux-mode-indicator= plugin).
 
-Colors follow the terminal theme: =bg= / =fg= use the terminal default; the
+I want the colors to follow  the terminal theme: =bg= / =fg= use the terminal default; the
 session name uses the terminal's =green= accent; the zoom "Z" uses
 the terminal's =red= accent.
 #+begin_src conf
@@ -95,7 +97,7 @@ set -g status-style 'bg=default,fg=default'
 #+end_src
 
 In the window list, the current window is wrapped in brackets; all
-windows use the default style.
+windows use the default style. Nice and simple.
 #+begin_src conf
 setw -g window-status-format         ' #I:#W#F '
 setw -g window-status-current-format ' [#I:#W#F]'
@@ -114,11 +116,9 @@ set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'MunifTanjim/tmux-mode-indicator'
 #+end_src
 
-Mode indicator styles — each mode maps to an ANSI accent from the
-terminal theme: prefix → =blue=, copy → =yellow=, sync → =red=,
-empty → =green=. Background is =default= so the chip blends with
-the bar; foreground is the accent color so the text carries the
-theme color while staying legible.
+Mode indicator styles, again following the principle of adhereing to terminal theme.
+It uses the same background as the rest of the status line, text color is the only
+thing that changes between modes.
 #+begin_src conf
 set -g @mode_indicator_prefix_mode_style 'fg=blue,bg=default'
 set -g @mode_indicator_copy_mode_style   'fg=yellow,bg=default'
@@ -126,7 +126,7 @@ set -g @mode_indicator_sync_mode_style   'fg=red,bg=default'
 set -g @mode_indicator_empty_mode_style  'fg=green,bg=default'
 #+end_src
 
-Initialize TPM — this must be the last line of the config so bindings
+Initialize TPM. This must be the last line of the config so bindings
 from installed plugins are picked up.
 #+begin_src conf
 run '~/.config/tmux/plugins/tpm/tpm'
