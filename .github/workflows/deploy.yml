@@ -44,7 +44,7 @@ jobs:
           "
 
       - name: Export org to Hugo Markdown
-        run: make export-hugo
+        run: make export-site
 
       - name: Set up Hugo
         uses: peaceiris/actions-hugo@v3

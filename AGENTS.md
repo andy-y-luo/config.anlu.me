@@ -32,8 +32,8 @@ Three top-level commands, from the repo root:
 
 ```sh
 make tangle       # tangle every *.org under src/ → ~/.config/...
-make export-hugo  # export every *.org under src/ → site/content/<module>/...
-make serve-hugo   # cd site && hugo serve (run after make export-hugo)
+make export-site  # export every *.org under src/ → site/content/<module>/...
+make serve-site   # cd site && hugo serve (run after make export-site)
 ```
 
 To scope the tangle to a single module (or subdirectory):
@@ -45,7 +45,7 @@ make tangle MODULE=emacs/packages     # only src/emacs/packages/
 
 Each target shells out to exactly one Emacs invocation.
 
-`export-hugo` is deliberately **not** scopeable. The script derives
+`export-site` is deliberately **not** scopeable. The script derives
 each file's section mechanically from its directory path under `src/`:
 a file at `src/<a>/<b>/<file>.org` exports to
 `site/content/<a>/<b>/<file>.md`. Walking a subtree instead would
@@ -72,7 +72,7 @@ Output filenames are decided at export time by
 Files are written with their final names; there is no post-export
 rename pass.
 
-`make export-hugo` wipes every `.md` under `site/content/` before
+`make export-site` wipes every `.md` under `site/content/` before
 exporting, and prunes empty directories afterwards, so it's always
 clean on re-run.
 
