@@ -1,8 +1,9 @@
----
-title: Anlu's Dotfiles
-layout: landing
----
++++
+title = "Anlu's Dotfiles"
+author = ["Andy Luo"]
+draft = false
++++
 
 Literate configuration for the tools I use daily. The source of truth lives
 in `src/` as a tree of `org` files; tangling produces the actual config
-under `~/.config/`, and exporting produces these docs.
+under `~/.config/`, and exporting produces this doc site.

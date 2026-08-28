@@ -1,4 +1,4 @@
-.PHONY: tangle export-hugo
+.PHONY: tangle export-hugo serve-hugo
 
 MODULE ?=
 tangle:
@@ -9,7 +9,10 @@ tangle:
 	fi
 
 export-hugo:
-	mkdir -p site/content/docs
-	find site/content/docs -name '*.md' -delete
+	mkdir -p site/content
+	find site/content -name '*.md' -delete
 	emacs -Q --batch -l build/export_hugo.el
-	find site/content/docs -type d -empty -delete
+	find site/content -type d -empty -delete
+
+serve-hugo:
+	cd site && hugo serve

@@ -1,0 +1,125 @@
++++
+title = "Emacs - Packages - Visual Configuration"
+author = ["Andy Luo"]
+keywords = ["dotfiles", "emacs", "configuration"]
+draft = false
++++
+
+## Visual Configuration {#visual-configuration}
+
+
+### Fringe {#fringe}
+
+It’s nice to know which lines were modified since the last commit in a file.
+
+```emacs-lisp
+(use-package diff-hl
+  :straight (:build t)
+  :custom
+  (diff-hl-fringe-bmp-function #'diff-hl-fringe-bmp-from-type)
+  :hook ((prog-mode . diff-hl-mode)
+         (org-mode . diff-hl-mode)
+         (markdown-mode . diff-hl-mode)
+         (latex-mode . diff-hl-mode))
+  :config
+  (set-face-attribute 'diff-hl-insert nil :background nil)
+  (set-face-attribute 'diff-hl-delete nil :background nil)
+  (set-face-attribute 'diff-hl-change nil :background nil)
+  (with-eval-after-load 'magit
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
+```
+
+
+### Icons {#icons}
+
+The package `all-the-icons` allows us to use a wide variety of icons in Emacs for various purposes, wherever we want, and _THAT_ is **GREAT**! I’ll (ab)use this feature in my config, be warned!
+**NOTE**: The first time a configuration with `all-the-icons` loads on a machine, the needed fonts might not be available, so you’ll need to install them with the commands `M-x all-the-icons-install-fonts` and `M-x nerd-icons-install-fonts`.
+
+```emacs-lisp
+(use-package all-the-icons
+  :defer t
+  :straight t)
+```
+
+
+### Ligatures {#ligatures}
+
+Emacs GUI does not support ligatures, but my font has them. Lets fix that with a package.
+
+```emacs-lisp
+(use-package ligature
+  :straight (ligature :type git
+                      :host github
+                      :repo "mickeynp/ligature.el"
+                      :build t)
+  :config
+  (ligature-set-ligatures 't
+                          '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures '(eww-mode org-mode elfeed-show-mode)
+                          '("ff" "fi" "ffi"))
+  ;; Enable all ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode
+                          '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                            ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                            "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                            "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                            "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                            "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                            "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                            "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                            ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                            "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                            "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                            "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                            "\\\\" "://"))
+  (global-ligature-mode t))
+```
+
+
+### Modeline {#modeline}
+
+The DoomEmacs modeline looks nice in my opinion, let’s use it.
+
+```emacs-lisp
+(use-package doom-modeline
+  :straight (:build t)
+  :defer t
+  :init
+  (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-height 15)
+  (doom-modeline-enable-word-count t)
+  (doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+  (doom-modeline-env-version t)
+  (doom-modeline-buffer-file-name-style 'truncate-upto-project))
+```
+
+
+### Secret mode {#secret-mode}
+
+Sometimes, I want to hide the text displayed by Emacs but not lock altogether my computer. In this case, `secret-mode` comes in handy.
+
+```emacs-lisp
+(use-package secret-mode
+  :defer t
+  :straight (secret-mode :build t
+                         :type git
+                         :host github
+                         :repo "bkaestner/secret-mode.el"))
+```
+
+
+### Solaire: Incandescent Emacs {#solaire-incandescent-emacs}
+
+A common issue when you have a lot of windows opened in Emacs is sometimes there’s just too much. Is the first window source code? Is the other one just an open email? Oh, let’s not forget the `*Messages*` buffer open next to another source buffer.
+
+Solaire-mode applies a subtle but useful tweak to your current colour scheme: the background of programming buffers is slightly lighter than the background of other buffers. (Or is it other buffers that have a slightly darker background? I’m not sure.)
+
+```emacs-lisp
+(use-package solaire-mode
+  :defer t
+  :straight (:build t)
+  :init (solaire-global-mode +1))
+```

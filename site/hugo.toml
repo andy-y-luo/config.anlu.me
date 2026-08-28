@@ -18,19 +18,12 @@ enableGitInfo = true
   startLevel = 1
 
 [markup.highlight]
-  style = 'base16-snazzy'
-
-# Top-right menu on the landing page
-[menu]
-[[menu.home]]
-  name = 'Documentation'
-  pageRef = '/docs/'
-  weight = 10
+  style = 'monokailight'
 
 # Theme parameters
 [params]
   BookTheme = 'light'
-  BookSection = 'docs'
+  BookSection = '*'
   BookSearch = true
   BookComments = false
   BookPortableLinks = false

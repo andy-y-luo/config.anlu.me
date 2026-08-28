@@ -28,11 +28,12 @@ treat the module list below as a current snapshot, not a contract.
 
 ## Build / tangle
 
-Two top-level commands, from the repo root:
+Three top-level commands, from the repo root:
 
 ```sh
 make tangle       # tangle every *.org under src/ → ~/.config/...
-make export-hugo  # export every *.org under src/ → site/content/docs/...
+make export-hugo  # export every *.org under src/ → site/content/<module>/...
+make serve-hugo   # cd site && hugo serve (run after make export-hugo)
 ```
 
 To scope the tangle to a single module (or subdirectory):
@@ -44,13 +45,20 @@ make tangle MODULE=emacs/packages     # only src/emacs/packages/
 
 Each target shells out to exactly one Emacs invocation.
 
-`export-hugo` is deliberately **not** scopeable. Section paths are
-derived from each file's location under `src/`, so walking a subtree
-instead would mis-derive them (`src/tmux/general.org` would land in a
-`docs/general.org/` section). The export is all-or-nothing, and the
-whole tree goes through in one invocation anyway. `build/export_hugo.el`
-takes no arguments and errors out if any `.org` file sits directly
-under `src/` rather than in a module directory.
+`export-hugo` is deliberately **not** scopeable. The script derives
+each file's section mechanically from its directory path under `src/`:
+a file at `src/<a>/<b>/<file>.org` exports to
+`site/content/<a>/<b>/<file>.md`. Walking a subtree instead would
+mis-derive the section prefix, so scope doesn't generalize and the
+export is all-or-nothing. `build/export_hugo.el` takes no arguments.
+
+Module directories under `src/` map directly to top-level Hugo
+sections. So `src/emacs/` exports to `site/content/emacs/`,
+`src/opencode/` to `site/content/opencode/`, etc. The one root-level
+file, `src/index.org`, is the site's landing page and exports to
+`site/content/_index.md`. It uses hugo-book's `landing` layout with a
+`site/layouts/landing.html` override that re-adds the sidebar (the
+theme's stock `landing.html` strips the menu container).
 
 The export is Hugo-specific end to end — `ox-hugo` exporter, injected
 `#+hugo_*` keywords, Hugo TOML front matter in the output. It is not a
@@ -64,9 +72,9 @@ Output filenames are decided at export time by
 Files are written with their final names; there is no post-export
 rename pass.
 
-`make export-hugo` wipes every `.md` under `site/content/docs/` before
-exporting and prunes empty directories afterwards, so it's always clean
-on re-run.
+`make export-hugo` wipes every `.md` under `site/content/` before
+exporting, and prunes empty directories afterwards, so it's always
+clean on re-run.
 
 `build/tangle.el` loads only the minimum Emacs needs:
 
@@ -168,7 +176,7 @@ same style for new commits.
 - Don't add a separate rename/post-processing pass for `_index.md`.
   Output naming is decided at export time by
   `my/export-hugo--output-name`; a second pass reintroduces a window
-  where `site/content/docs/` is in a broken state (a directory with
+  where `site/content/<module>/` is in a broken state (a directory with
   `index.md` instead of `_index.md` becomes a leaf bundle and its
   sibling pages stop being routable).
 - Don't add a `<dir>`/`MODULE` argument to `build/export_hugo.el`.
@@ -180,9 +188,5 @@ same style for new commits.
   `org-babel-parse-header-arguments`, where `,` is the elisp unquote
   reader macro, so `a, b` silently becomes nested garbage
   (`["a", [",", "b"]]`) in the front matter instead of failing.
-- Don't add a `docs/_index.md` landing page. The docs section has no
-  landing page by design — every `.md` under `site/content/docs/` is
-  generated from an org source, and the site's only landing page is
-  `site/content/_index.md`.
 - Don't remove `#+setupfile: ../headers` from org files; it carries
   the shared `#+property:` defaults (including `noweb`).
