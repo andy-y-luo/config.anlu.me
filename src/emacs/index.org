@@ -60,6 +60,9 @@ The configuration is split between files for better organization and navigation 
 | =programming.el=         | [[file:packages/programming.org][Packages - Programming]]          |
 | =visual-config.el=       | [[file:packages/visual-config.org][Packages - Visual Configuration]] |
 
+
+This helper function will generate the module filenames represented in the table.
+
 #+name: generate-modules
 #+begin_src emacs-lisp :tangle no :cache yes :var modules=emacs-modules :exports none
 (mapconcat (lambda (line)
@@ -68,8 +71,7 @@ The configuration is split between files for better organization and navigation 
            " ")
 #+end_src
 
-#+RESULTS[2ec1a585257002a9590af943b334a302779c87d4]: generate-modules
-: "basic-config.el" "custom-elisp.el" "package-manager.el"
+This block (with the generated module names) is what actually lands in the ~init.el~ file, pulling in all of the other configuration files.
 
 #+begin_src emacs-lisp :noweb yes
 (dolist (module '(<<generate-modules()>>))

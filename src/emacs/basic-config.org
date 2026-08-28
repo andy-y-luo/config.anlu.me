@@ -6,7 +6,6 @@
 
 * Basic Configuration
 ** Early initialization
-
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle ~/.config/emacs/early-init.el :mkdirp yes
 :header-args:emacs-lisp+: :exports code :results silent :lexical t
