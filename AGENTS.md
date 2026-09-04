@@ -196,3 +196,6 @@ same style for new commits.
   (`["a", [",", "b"]]`) in the front matter instead of failing.
 - Don't remove `#+setupfile: ../headers` from org files; it carries
   the shared `#+property:` defaults (including `noweb`).
+- Prose in `*.org` sources is the user's. Add new bullets or fix
+  typos in place; do not restyle surrounding sentences. Aim to match
+  the user's style if authoring additional content.
