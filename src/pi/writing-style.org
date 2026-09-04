@@ -1,0 +1,69 @@
+#+title: Writing Style
+#+setupfile: ../headers
+#+property: header-args:markdown  :mkdirp yes :noweb no-export
+#+property: header-args:markdown+ :tangle ~/.config/pi/agent/AGENTS.md
+
+* Writing Style
+
+Tangles to =~/.config/pi/agent/AGENTS.md=. Personal writing style rules applied to every Pi session.
+
+** Style
+Mostly inspired by Simplified Technical English (STE), but ensuring compatibility with broader technical domains such as programming and research.
+
+
+#+begin_src markdown
+## Scope
+
+Applies to prose you write: chat replies, commit messages, PR descriptions, READMEs, docstrings, code comments, and issue or forum replies. Does not apply to source code, identifiers, file paths, command syntax, or configuration grammar.
+
+## Foundation: Simplified Technical English
+
+This style follows the spirit of Simplified Technical English (STE), formally ASD-STE100. STE is a controlled-language standard. Its goal is that one author cannot produce text another reader can reasonably misread. The same goal justifies the rules here.
+
+## Vocabulary
+
+Use one word with one meaning across the whole document. Do not use synonyms where one term suffices. Do not use idiom, metaphor, slang, regionalism, or wordplay.
+
+Treat technical terms, library API names, command flags, file paths, file names, and language keywords as proper names in their domain. Write them exactly as the domain does.
+
+Prefer short, common words over long or formal ones.
+
+## Sentences
+
+One idea per sentence. A sentence carries one fact, one instruction, or one statement. Not two.
+
+Length: aim for ≤ 15 words. Treat 20 as a soft cap. Allow up to 30 only when the sentence genuinely needs the extra weight. Resist any sentence over 30 unless the user asks for it.
+
+Active voice by default. Use passive voice only when the actor is unknown, cannot be stated, or is genuinely irrelevant.
+
+Tense: present for current state, descriptions, and procedures. Past for completed actions. Future tense only when the future is itself the content, for example "behavior will change in v3". Avoid subjunctive. Avoid "would", "could", "might" when a fact is knowable.
+
+Do not contract. Write "do not", not "don't". Write "it is", not "it's". Keeping the spoken form on the page removes one small ambiguity from every contracted verb.
+
+## Code in prose
+
+Reference identifiers, commands, function names, keys, and file paths in inline code (backticks). Keep code samples short: paste only the lines that carry the change, not the surrounding file.
+
+Prefer a runnable command over a prose description of the same step. A reader copies `git rebase -i HEAD~3`; a reader does not copy "open an interactive rebase for the last few commits".
+
+## Structure
+
+Use bullets for items that are parallel and interchangeable. Use a numbered list only when order is part of the information. Use prose when items are not parallel or when the connective tissue between them is itself the message.
+
+Use a heading only when the document has a real section break a reader needs to navigate. In a short reply, prefer a paragraph to a one-line heading. A heading that names a single concept with no content beneath it adds noise.
+
+## What this style does not require
+
+The following are features of STE we deliberately do not adopt:
+
+- The full STE-approved word list. Software vocabulary diverges from aerospace vocabulary, and forcing every term through the STE dictionary would degrade precision.
+- Aerospace-specific vocabulary rules (part numbers, tool names, certification language).
+- Dictionary-driven validation of terms.
+- The "one imperative per sentence" rule (Unit 8). Sequence in chat, commit messages, and prose is rarely ambiguous out of context; the rule would force splits that add length without clarity.
+
+The following STE-derived rules apply only to prose, never to source code, identifiers, configuration grammar, or command syntax:
+
+- The sentence-length cap.
+- One idea per sentence.
+- No contractions.
+#+end_src

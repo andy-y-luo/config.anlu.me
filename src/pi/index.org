@@ -1,0 +1,14 @@
+#+title: Pi
+#+setupfile: ../headers
+
+* Pi
+
+Literate configuration for [[https://github.com/earendil-works/pi-mono][Pi]]. Each module tangles to its target under =~/.config/pi/agent/=.
+
+Pi is a minimal and extensible agent harness. I like the overall philosophy of starting with a lightweight base, then only adding and configuring whatever is necessary, instead of starting out in a batteries-included way (e.g. OpenCode, Claude Code).
+
+** Modules
+#+name: pi-modules
+| Tangle target                  | Config Page   |
+|--------------------------------+---------------|
+| =~/.config/pi/agent/AGENTS.md= | [[file:writing-style.org][Writing style]] |

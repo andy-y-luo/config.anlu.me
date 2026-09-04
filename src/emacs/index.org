@@ -41,17 +41,17 @@ On the other hand, noweb snippets without parenthesis simply replace the snippet
 The configuration is split between files for better organization and navigation (a single thousand+ line file is too hard to work with imo).
 
 #+name: emacs-modules
-| Module Name              | Config Page                     |
-|--------------------------+---------------------------------|
-| =basic-config.el=        | [[file:basic-config.org][Basic Configuration]]             |
-| =custom-elisp.el=        | [[file:custom-elisp.org][Custom Elisp]]                    |
-| =package-manager.el=     | [[file:package-manager.org][Package Manager]]                 |
-| =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]             |
-| =applications.el=        | [[file:packages/applications.org][Applications]]                     |
-| =autocompletion.el=      | [[file:packages/autocompletion.org][Autocompletion]]                |
-| =org.el=                 | [[file:packages/org.org][Org Mode]]                          |
-| =programming.el=         | [[file:packages/programming.org][Programming]]                    |
-| =visual-config.el=       | [[file:packages/visual-config.org][Visual Configuration]]          |
+| Module Name              | Config Page          |
+|--------------------------+----------------------|
+| =basic-config.el=        | [[file:basic-config.org][Basic Configuration]]  |
+| =custom-elisp.el=        | [[file:custom-elisp.org][Custom Elisp]]         |
+| =package-manager.el=     | [[file:package-manager.org][Package Manager]]      |
+| =keybinding-managers.el= | [[file:keybinding-managers.org][Keybinding Managers]]  |
+| =applications.el=        | [[file:packages/applications.org][Applications]]         |
+| =autocompletion.el=      | [[file:packages/autocompletion.org][Autocompletion]]       |
+| =org.el=                 | [[file:packages/org.org][Org Mode]]             |
+| =programming.el=         | [[file:packages/programming.org][Programming]]          |
+| =visual-config.el=       | [[file:packages/visual-config.org][Visual Configuration]] |
 
 
 This helper function will generate the module filenames represented in the table.
